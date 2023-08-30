@@ -1,0 +1,22 @@
+* {
+    padding: none;
+    margin: none;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+	margin-top: 20px;
+}
+
+#root {
+    max-width: 800px;
+    margin: 0 auto;
+}
