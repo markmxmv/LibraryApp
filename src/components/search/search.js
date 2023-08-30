@@ -8,7 +8,8 @@ export class Search extends DivComponent {
     }
 
     search() {
-        
+        const value = this.el.querySelector('input').value;
+        this.state.searchQuery = value;
     }
 
     render() {
@@ -23,6 +24,12 @@ export class Search extends DivComponent {
                 
             </div>
         `;
+        this.el.querySelector('button').addEventListener('click', this.search.bind(this));
+        this.el.querySelector('input').addEventListener('keydown', (e) => {
+            if(e.code == 'Enter') {
+                this.search();
+            } return
+        })
         return this.el;
     }
 }
