@@ -7,6 +7,7 @@ import { CardList } from "../../components/cardlist/cardlist.js";
 export class MainView extends AbstractView {
     state = {
         list: [],
+        numFound: 0,
         loading: false,
         searchQuery: undefined,
         offset: 0
@@ -14,44 +15,54 @@ export class MainView extends AbstractView {
 
     constructor(appState) {
         super();
-        this.setTitle('Library App');
         this.appState = appState;
-        this.appState = onChange(this.appState, this.appStateHoook.bind(this));
-        this.state = onChange(this.state, this.stateHoook.bind(this));
-
+        this.appState = onChange(this.appState, this.appStateHook.bind(this));
+        this.state = onChange(this.state, this.stateHook.bind(this));
+        this.setTitle('Library App');
     }
 
-    appStateHoook(path) {
+    destroy() {
+        onChange.unsubscribe(this.appState);
+        onChange.unsubscribe(this.state)
+    }
+
+    appStateHook(path) {
         if (path === 'favorites') {
-            console.log(path)
+            this.render();
         }
 
     }
 
-    async stateHoook(path) {
+    async stateHook(path) {
         if (path === 'searchQuery') {
             this.state.loading = true;
             const data = await this.loadList(this.state.searchQuery, this.state.offset);
             this.state.loading = false;
-            console.log(data);
+            console.log(data)
+            this.state.numFound = data.numFound;
             this.state.list = data.docs;
-            console.log(this.state.list)
+        }
+
+        if(path === 'list' || path === 'loading') {
+            this.render()
         }
     }
 
     async loadList(q, offset) {
         const res = await fetch(`https://openlibrary.org/search.json?q=${q}&offset=${offset}`);
-        return res.json()
+        return res.json();
     }
 
     render() {
         const main = document.createElement('div');
-        main.append(new Search(this.state).render());
-        main.append(new CardList(this.state).render())
+        main.innerHTML = `
+            <h1>Books found: ${this.state.numFound}</h1>
+        `
+        main.prepend(new Search(this.state).render());
+        main.append(new CardList(this.appState, this.state).render());
         this.app.innerHTML = '';
         this.app.append(main);
         this.renderHeader();
-		this.appState.favorites.push('d');
     }
 
     renderHeader() {

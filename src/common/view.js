@@ -7,10 +7,10 @@ export class AbstractView {
     }
 
     render() {
-        return
+        return;
     }
 
     destroy() {
-        return
+        return;
     }
 }
